@@ -7,9 +7,12 @@ import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import android.content.Intent
-
-
-
+import android.R.menu
+import android.support.annotation.NonNull
+import android.view.Menu
+import android.view.MenuItem
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 
 
 class MainActivity : AppCompatActivity() {
@@ -73,5 +76,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.getItemId() === R.id.menu_sign_out) {
+            AuthUI.getInstance().signOut(this)
+                .addOnCompleteListener(object : OnCompleteListener<Void> {
+                    override fun onComplete(task: Task<Void>) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "You have been signed out.",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+
+                        // Close activity
+                        finish()
+                    }
+                })
+        }
+        return true
     }
 }
