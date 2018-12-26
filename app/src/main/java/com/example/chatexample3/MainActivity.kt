@@ -13,6 +13,10 @@ import android.view.Menu
 import android.view.MenuItem
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.database.FirebaseDatabase
+import android.widget.EditText
+import android.support.design.widget.FloatingActionButton
+import android.view.View
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,6 +46,32 @@ class MainActivity : AppCompatActivity() {
             // Load chat room contents
             displayChatMessages();
         }
+
+        //
+        val fab = findViewById<View>(R.id.fab) as FloatingActionButton
+
+        fab.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
+                val input = findViewById<View>(R.id.input) as EditText
+
+                // Read the input field and push a new instance
+                // of ChatMessage to the Firebase database
+                FirebaseDatabase.getInstance()
+                    .reference
+                    .push()
+                    .setValue(
+                        ChatMessage(
+                            input.text.toString(),
+                            FirebaseAuth.getInstance()
+                                .currentUser!!
+                                .displayName
+                        )
+                    )
+
+                // Clear the input
+                input.setText("")
+            }
+        })
     }
 
     private fun displayChatMessages() {
