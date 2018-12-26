@@ -16,12 +16,22 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.FirebaseDatabase
 import android.widget.EditText
 import android.support.design.widget.FloatingActionButton
+import android.text.format.DateFormat
 import android.view.View
+import android.widget.ListView
+import com.firebase.ui.database.FirebaseListAdapter
+import android.widget.TextView
+
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
 
     private val SIGN_IN_REQUEST_CODE: Int = 100
+
+    private var adapter: FirebaseListAdapter<ChatMessage>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +85,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayChatMessages() {
+        val listOfMessages = findViewById<View>(R.id.list_of_messages) as ListView
 
+        adapter = object : FirebaseListAdapter<ChatMessage>(
+            this, ChatMessage::class.java,
+            R.layout.message, FirebaseDatabase.getInstance().reference
+        ) {
+            override fun populateView(v: View, model: ChatMessage, position: Int) {
+                // Get references to the views of message.xml
+                val messageText = v.findViewById<View>(R.id.message_text) as TextView
+                val messageUser = v.findViewById<View>(R.id.message_user) as TextView
+                val messageTime = v.findViewById<View>(R.id.message_time) as TextView
+
+                // Set their text
+                messageText.text = model.messageText
+                messageUser.text = model.messageUser
+
+                // Format the date before showing it
+                messageTime.setText(
+                    DateFormat.format(
+                        "dd-MM-yyyy (HH:mm:ss)",
+                        model.messageTime
+                    )
+                )
+            }
+        }
+
+        listOfMessages.setAdapter(adapter)
     }
 
     override fun onActivityResult(
