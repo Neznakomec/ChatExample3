@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
         if(FirebaseAuth.getInstance().getCurrentUser() == null) {
             // Start sign in/sign up activity
             startActivityForResult(
